@@ -91,5 +91,5 @@ function printStore() {
         }
         console.log("\n" + table.toString() + "\n");
         shop();
-    })
+    });
 }
