@@ -51,7 +51,7 @@ function shop() {
             connection.query("SELECT * FROM products WHERE item_id=?", [response.id], function (err, res) {
                 if (err) throw err;
                 if (res[0].stock_quantity > 0) {
-                    if (response.quantity < res[0].stock_quantity) {
+                    if (response.quantity <= res[0].stock_quantity) {
                         connection.query("UPDATE products SET stock_quantity=? WHERE item_id=?",
                             [(res[0].stock_quantity - response.quantity), response.id], function (err, res) {
                                 if (err) throw err;
@@ -84,6 +84,7 @@ function printStore() {
             , 'right': '║', 'right-mid': '╢', 'middle': '│'
         }
     });
+
     connection.query("SELECT * FROM products", function (err, res) {
         if (err) throw err;
         for (var i = 0; i < res.length; i++) {
