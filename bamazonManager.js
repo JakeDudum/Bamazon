@@ -55,7 +55,7 @@ function managerView() {
 function viewProducts() {
     var table = new Table({
         head: ['ID', 'Product', 'Department', 'Price', 'Stock']
-        , colWidths: [5, 65, 25, 8, 10],
+        , colWidths: [5, 65, 25, 10, 10],
         chars: {
             'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗'
             , 'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝'
@@ -77,7 +77,7 @@ function viewProducts() {
 function viewLowInventory() {
     var table = new Table({
         head: ['ID', 'Product', 'Department', 'Price', 'Stock']
-        , colWidths: [5, 65, 25, 8, 10],
+        , colWidths: [5, 65, 25, 10, 10],
         chars: {
             'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗'
             , 'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝'
@@ -127,9 +127,85 @@ function addInventory() {
                 console.log()
                 connection.query("UPDATE products SET stock_quantity=? WHERE product_name=?", [(parseInt(response.add) + res[itemsArr.indexOf(response.item)].stock_quantity), response.item], function (err, res) {
                     if (err) throw err;
+
+                    console.log("Added " + response.add + " " + response.item + "!");
+                    managerView();
                 });
-                console.log("Added " + response.add + " " + response.item + "!");
-                managerView();
+            });
+    });
+}
+
+function addProduct() {
+    var departments = [];
+
+    connection.query("SELECT department_name FROM products", function (err, res) {
+        for (var i = 0; i < res.length; i++) {
+            if (departments.indexOf(res[i].department_name) === -1) {
+                departments.push(res[i].department_name);
+            }
+        }
+
+        inquirer.prompt([
+            {
+                type: "input",
+                message: "What is the name of the item?",
+                name: "item",
+                validate: function (value) {
+                    if (value !== "") {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            },
+            {
+                type: "list",
+                message: "What departmet does it belong to?",
+                choices: departments,
+                name: "department"
+            },
+            {
+                type: "input",
+                message: "What is the cost of the item?",
+                name: "cost",
+                validate: function (value) {
+                    if (isNaN(value) === false && value !== "") {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            },
+            {
+                type: "input",
+                message: "How many do we have?",
+                name: "stock",
+                validate: function (value) {
+                    if (isNaN(value) === false && value !== "") {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            },
+        ])
+            .then(function (response) {
+                connection.query("INSERT INTO products SET ?",
+                    {
+                        product_name: response.item,
+                        department_name: response.department,
+                        price: response.cost,
+                        stock_quantity: response.stock
+                    },
+                    function (err, res) {
+                        if (err) throw err;
+                        console.log("Added " + response.item + " to " + response.department + "!");
+                        managerView();
+                    }
+                );
             });
     });
 }

@@ -76,7 +76,7 @@ function shop() {
 function printStore() {
     var table = new Table({
         head: ['ID', 'Product', 'Department', 'Price', 'Stock']
-        , colWidths: [5, 65, 25, 8, 10],
+        , colWidths: [5, 65, 25, 10, 10],
         chars: {
             'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗'
             , 'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝'
