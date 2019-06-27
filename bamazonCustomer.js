@@ -29,7 +29,7 @@ function shop() {
             message: "What is the ID of the item you would like to purchase?",
             name: "id",
             validate: function (value) {
-                if (isNaN(value) === false && value!== "") {
+                if (isNaN(value) === false && value !== "") {
                     return true;
                 }
                 return false;
@@ -40,7 +40,7 @@ function shop() {
             message: "How many would you like to buy?",
             name: "quantity",
             validate: function (value) {
-                if (isNaN(value) === false && value!== "") {
+                if (isNaN(value) === false && value !== "") {
                     return true;
                 }
                 return false;
@@ -50,20 +50,24 @@ function shop() {
         .then(function (response) {
             connection.query("SELECT * FROM products WHERE item_id=?", [response.id], function (err, res) {
                 if (err) throw err;
-                if (res.stock_quantity > 0) {
-                    if (response.quantity < res.stock_quantity) {
-                        connection.query("UPDATE products SET stock_quantity=? WHERE item_id=?", [reponse.quantity, response.id], function (err, res) {
-                            if (err) throw err;
-                        });
+                if (res[0].stock_quantity > 0) {
+                    if (response.quantity < res[0].stock_quantity) {
+                        connection.query("UPDATE products SET stock_quantity=? WHERE item_id=?",
+                            [(res[0].stock_quantity - response.quantity), response.id], function (err, res) {
+                                if (err) throw err;
+                            });
+                        console.log("Successfully purchased " + response.quantity + " " + res[0].product_name + "!");
+                        console.log("Your total was $" + ((Math.round(res[0].price * 100) * response.quantity))/100 + "!");
+                        printStore();
                     }
                     else {
                         console.log("Insufficient quantity!");
-                        shop();
+                        printStore();
                     }
                 }
                 else {
-                    console.log("Sorry were currently sold out of that item!");
-                    shop();
+                    console.log("Sorry we're currently sold out of that item!");
+                    printStore();
                 }
             });
         });
