@@ -32,3 +32,10 @@ VALUES ("Tom Clancy's Rainbow Six Siege", "Video Games", 19.99, 300, 0),
     ("Intel Core 17-5930K CPU @ 3.50GHz", "Computer Parts", 649.99, 50, 0),
     ("Body Towel", "Bed, Bath, and BEYOND", 9.99, 1000, 0),
     ("Kirkland Signature Bath Tissue, 2-Ply, 425 sheets, 30 rolls", "Bed, Bath, and BEYOND", 19.99, 200, 0);
+
+INSERT INTO departments (department_name, over_head_costs)
+VALUES ("Video Games", 10000),
+    ("Food and Drink", 7500),
+    ("Movies", 50000),
+    ("Computer Parts", 25000),
+    ("Bed, Bath, and BEYOND", 20000);
