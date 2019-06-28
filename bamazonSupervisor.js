@@ -70,8 +70,8 @@ function viewProducts() {
 
 function viewProductSales() {
     var table = new Table({
-        head: ['ID', 'Product', 'Department', 'Price', 'Stock']
-        , colWidths: [5, 65, 25, 10, 10],
+        head: ['ID', 'Department', 'Over Head Cost', 'Product Sales', 'Total Profit']
+        , colWidths: [5, 35, 20, 20, 15],
         chars: {
             'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗'
             , 'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝'
@@ -80,14 +80,17 @@ function viewProductSales() {
         }
     });
 
-    connection.query("SELECT departments.department_id, departments.department_name, departments.over_head_costs FROM departments LEFT JOIN products WHERE departments.department_name = products.department_name", function (err, res) {
+    var query = "SELECT departments.department_id, departments.department_name, departments.over_head_costs, IFNULL(products.product_sales, 0) AS product_sales, ";
+    query += "IFNULL(products.product_sales - departments.over_head_costs, 0-departments.over_head_costs) AS total_profit ";
+    query += "FROM departments LEFT JOIN products ON departments.department_name = products.department_name ";
+    query += "GROUP BY department_name";
+    connection.query(query, function (err, res) {
         if (err) throw err;
-
         for (var i = 0; i < res.length; i++) {
-            table.push([res[i].department_id, res[i].department_name, res[i].over_head_costs, res[i].productsales, res[i].profit]);
+            table.push([res[i].department_id, res[i].department_name, res[i].over_head_costs, res[i].product_sales, res[i].total_profit]);
         }
         console.log("\n" + table.toString() + "\n");
-        managerView();
+        supervisorView();
     });
 }
 
@@ -122,15 +125,15 @@ function createDepartment() {
     ])
         .then(function (response) {
             connection.query("INSERT INTO departments SET ?",
-                    {
-                        department_name: response.department,
-                        over_head_costs: response.cost
-                    },
-                    function (err, res) {
-                        if (err) throw err;
-                        console.log("Created new department " + response.department + " with an over head cost of " + response.cost + "!");
-                        supervisorView();
-                    }
-                );
+                {
+                    department_name: response.department,
+                    over_head_costs: response.cost
+                },
+                function (err, res) {
+                    if (err) throw err;
+                    console.log("Created new department " + response.department + " with an over head cost of " + response.cost + "!");
+                    supervisorView();
+                }
+            );
         });
 }

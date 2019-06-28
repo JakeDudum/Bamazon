@@ -125,12 +125,13 @@ function addInventory() {
         ])
             .then(function (response) {
                 console.log()
-                connection.query("UPDATE products SET stock_quantity=? WHERE product_name=?", [(parseInt(response.add) + res[itemsArr.indexOf(response.item)].stock_quantity), response.item], function (err, res) {
-                    if (err) throw err;
+                connection.query("UPDATE products SET stock_quantity=? WHERE product_name=?",
+                    [(parseInt(response.add) + res[itemsArr.indexOf(response.item)].stock_quantity), response.item], function (err, res) {
+                        if (err) throw err;
 
-                    console.log("Added " + response.add + " " + response.item + "!");
-                    managerView();
-                });
+                        console.log("Added " + response.add + " " + response.item + "!");
+                        managerView();
+                    });
             });
     });
 }
