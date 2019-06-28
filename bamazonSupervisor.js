@@ -19,11 +19,10 @@ var connection = mysql.createConnection({
 connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId);
-    supervisorView();
+    viewProducts();
 });
 
 function supervisorView() {
-    viewProducts();
     inquirer.prompt([
         {
             type: "list",
@@ -93,5 +92,45 @@ function viewProductSales() {
 }
 
 function createDepartment() {
-
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the name of the department?",
+            name: "department",
+            validate: function (value) {
+                if (value !== "") {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        },
+        {
+            type: "input",
+            message: "What is the over head cost of this department?",
+            name: "cost",
+            validate: function (value) {
+                if (isNaN(value) === false && value !== "") {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+    ])
+        .then(function (response) {
+            connection.query("INSERT INTO departments SET ?",
+                    {
+                        department_name: response.department,
+                        over_head_costs: response.cost
+                    },
+                    function (err, res) {
+                        if (err) throw err;
+                        console.log("Created new department " + response.department + " with an over head cost of " + response.cost + "!");
+                        supervisorView();
+                    }
+                );
+        });
 }
