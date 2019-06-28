@@ -26,7 +26,7 @@ function shop() {
     inquirer.prompt([
         {
             type: "input",
-            message: "What is the ID of the item you would like to purchase?",
+            message: "What is the ID of the item you would like to purchase? [press ctrl/command+c to quit]",
             name: "id",
             validate: function (value) {
                 if (isNaN(value) === false && value !== "") {
@@ -37,7 +37,7 @@ function shop() {
         },
         {
             type: "input",
-            message: "How many would you like to buy?",
+            message: "How many would you like to buy? [press ctrl+c to quit]",
             name: "quantity",
             validate: function (value) {
                 if (isNaN(value) === false && value !== "") {
@@ -53,12 +53,12 @@ function shop() {
                 if (res[0].stock_quantity > 0) {
                     if (response.quantity <= res[0].stock_quantity) {
                         connection.query("UPDATE products SET stock_quantity=?, product_sales=? WHERE item_id=?",
-                            [(res[0].stock_quantity - response.quantity), (res[0].product_sales + (((Math.round(res[0].price * 100) * response.quantity)) / 100)),
+                            [(res[0].stock_quantity - response.quantity), (res[0].product_sales + parseFloat((res[0].price * response.quantity).toFixed(2))),
                             response.id], function (err, res) {
                                 if (err) throw err;
                             });
                         console.log("Successfully purchased " + response.quantity + " " + res[0].product_name + "!");
-                        console.log("Your total was $" + ((Math.round(res[0].price * 100) * response.quantity)) / 100 + "!");
+                        console.log("Your total was $" + (res[0].price * response.quantity).toFixed(2) + "!");
                         printStore();
                     }
                     else {

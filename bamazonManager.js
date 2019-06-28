@@ -139,11 +139,9 @@ function addInventory() {
 function addProduct() {
     var departments = [];
 
-    connection.query("SELECT department_name FROM products", function (err, res) {
+    connection.query("SELECT department_name FROM departments", function (err, res) {
         for (var i = 0; i < res.length; i++) {
-            if (departments.indexOf(res[i].department_name) === -1) {
-                departments.push(res[i].department_name);
-            }
+            departments.push(res[i].department_name)
         }
 
         inquirer.prompt([
@@ -199,7 +197,8 @@ function addProduct() {
                         product_name: response.item,
                         department_name: response.department,
                         price: response.cost,
-                        stock_quantity: response.stock
+                        stock_quantity: response.stock,
+                        product_sales: 0
                     },
                     function (err, res) {
                         if (err) throw err;

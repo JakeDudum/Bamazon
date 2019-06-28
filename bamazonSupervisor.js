@@ -87,7 +87,7 @@ function viewProductSales() {
     connection.query(query, function (err, res) {
         if (err) throw err;
         for (var i = 0; i < res.length; i++) {
-            table.push([res[i].department_id, res[i].department_name, res[i].over_head_costs, res[i].product_sales, res[i].total_profit]);
+            table.push([res[i].department_id, res[i].department_name, res[i].over_head_costs, parseFloat(res[i].product_sales.toFixed(2)) , parseFloat(res[i].total_profit.toFixed(2))]);
         }
         console.log("\n" + table.toString() + "\n");
         supervisorView();
