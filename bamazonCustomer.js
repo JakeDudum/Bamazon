@@ -52,12 +52,13 @@ function shop() {
                 if (err) throw err;
                 if (res[0].stock_quantity > 0) {
                     if (response.quantity <= res[0].stock_quantity) {
-                        connection.query("UPDATE products SET stock_quantity=? WHERE item_id=?",
-                            [(res[0].stock_quantity - response.quantity), response.id], function (err, res) {
+                        connection.query("UPDATE products SET stock_quantity=?, product_sales=? WHERE item_id=?",
+                            [(res[0].stock_quantity - response.quantity), (res[0].product_sales + (((Math.round(res[0].price * 100) * response.quantity)) / 100)),
+                            response.id], function (err, res) {
                                 if (err) throw err;
                             });
                         console.log("Successfully purchased " + response.quantity + " " + res[0].product_name + "!");
-                        console.log("Your total was $" + ((Math.round(res[0].price * 100) * response.quantity))/100 + "!");
+                        console.log("Your total was $" + ((Math.round(res[0].price * 100) * response.quantity)) / 100 + "!");
                         printStore();
                     }
                     else {
